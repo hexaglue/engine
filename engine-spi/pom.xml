@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This Source Code Form is part of the HexaGlue project.
+  Copyright (c) 2025 Scalastic
+
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+  Commercial licensing options are available for organizations wishing
+  to use HexaGlue under terms different from the MPL 2.0.
+  Contact: info@hexaglue.io
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.hexaglue</groupId>
+        <artifactId>engine-parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>engine-spi</artifactId>
+    <packaging>jar</packaging>
+
+    <name>HexaGlue Engine – SPI</name>
+    <description>Stable Service Provider Interface for HexaGlue plugins.
+    This module defines the only supported contract between the HexaGlue engine
+    and third-party plugins.</description>
+
+    <properties>
+        <!-- Override root directory for license plugin (one level up) -->
+        <hexaglue.engine.root>${project.basedir}/..</hexaglue.engine.root>
+    </properties>
+
+    <dependencies>
+        <!--
+        engine-spi MUST remain JDK-only.
+        No external dependencies are allowed here.
+        -->
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- Enforce SPI purity -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-spi-no-deps</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <!-- Ensure JDK-only dependencies -->
+                                    <excludes>
+                                        <exclude>*:*</exclude>
+                                    </excludes>
+                                    <searchTransitive>true</searchTransitive>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>

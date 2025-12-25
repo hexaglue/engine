@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This Source Code Form is part of the HexaGlue project.
+  Copyright (c) 2025 Scalastic
+
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+  Commercial licensing options are available for organizations wishing
+  to use HexaGlue under terms different from the MPL 2.0.
+  Contact: info@hexaglue.io
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.hexaglue</groupId>
+        <artifactId>engine-parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>engine-testing-harness</artifactId>
+    <packaging>jar</packaging>
+
+    <name>HexaGlue Engine – Testing Harness</name>
+    <description>Testing utilities for HexaGlue plugin developers, enabling compile-time
+    execution and validation of infrastructure generation.</description>
+    <properties>
+        <!-- Override root directory for license plugin (one level up) -->
+        <hexaglue.engine.root>${project.basedir}/..</hexaglue.engine.root>
+    </properties>
+
+    <!--
+        Import engine-bom to get versions of engine modules (engine-spi, engine-core, etc.)
+        This is needed because the parent does not define versions for internal modules.
+    -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.hexaglue</groupId>
+                <artifactId>engine-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <!-- Harness runtime API depends on SPI so plugin authors can compile tests -->
+        <dependency>
+            <groupId>io.hexaglue</groupId>
+            <artifactId>engine-spi</artifactId>
+        </dependency>
+
+        <!-- Harness needs core because it runs the real annotation processor -->
+        <dependency>
+            <groupId>io.hexaglue</groupId>
+            <artifactId>engine-core</artifactId>
+        </dependency>
+
+        <!-- Compile-testing engine (Google) -->
+        <dependency>
+            <groupId>com.google.testing.compile</groupId>
+            <artifactId>compile-testing</artifactId>
+            <version>${compile-testing.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Assertions (used by most of your examples) -->
+        <dependency>
+            <groupId>com.google.truth</groupId>
+            <artifactId>truth</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- JUnit 5 for harness' own tests -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- Ensure JUnit 5 execution when harness itself has tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- Disable module-path for tests (needed for annotation processor testing) -->
+                    <useModulePath>false</useModulePath>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
